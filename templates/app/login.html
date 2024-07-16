@@ -1,0 +1,61 @@
+{% extends 'app/base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}
+{{ block.super }}-login
+    
+{% endblock title %}
+
+    
+{% block content %}
+<section class="login-container">
+    <div class="base-container">
+        <h2>Login</h2>
+        <p>If you have not created an account yet, then please <a href="">Sign Up</a> first</p>
+        <form action="{% url 'login' %}" method="post" novalidate>
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+                <div class="alert_danger">
+
+                    {{error}}
+                </div>
+            {% endfor %}
+            {% endif %}
+
+            
+            {% for field in form %}
+                <div class="form-control">
+                    <label for="{{field.id_for_label}}">{{field.label_tag}}</label>
+                    {% if form.is_bound %}
+                        
+                        {% if field.errors %}
+                            {% render_field field class="in-valid" %}
+                            
+                            {% for error in field.errors %}
+                                <span class="error">{{error}}</span>
+                            {% endfor %}
+                        {% else %}
+                            {% render_field field class="valid" %}                          
+                        {% endif %}
+                    {% else %}
+                    {% render_field field %}       
+                    {% endif %}
+                    
+                        
+                </div>
+            {% endfor %}
+                
+            
+                
+
+                
+            
+            <a href="">Forgot your password?</a>
+            <button type="submit">sign in</button>
+        </form>
+    </div>
+</section>
+{% endblock content %}
+        

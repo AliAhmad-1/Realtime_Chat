@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>
+        {% block title %}
+            Chat
+        {% endblock title %}
+            </title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+        <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+    </head>
+    <body>
+        <header>
+            <nav>
+                <div>
+                    <p><a href="{% url 'home' %}">Real-time Chat</a></p>
+                </div>
+                <ul>
+                    
+                    {% if request.user.is_authenticated %}
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li>
+                        
+                        {% if request.user.photo %}
+                        <img src="{{request.user.photo.url}}" alt="user_photo">
+
+                        {% else %}
+                        <img src="{% static 'images/dp.png' %}" alt="user_photo">
+
+                        {% endif %}
+                            
+                        <span class="user_name">
+                            <div>
+                                {{request.user}}
+                                <a class="down" style="color: #437badf0; font-size: 18px;">   &#9662;</a>
+                            </div>
+            
+                            <div class="dropdown">
+                                <ul>
+                                    <li><a href="{% url 'profile' %}">Profile</a></li>
+                                    <li>
+                                        <p>In order to join an existing group , you can enter its name here :</p>
+                                        <form action="" method="post" novalidate>
+                                
+                                            {% csrf_token %}
+                                            
+                                            <input type="text" name="group_name" placeholder="Enter group name">
+                                            <button type="submit">Join</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        </span>
+                    </li>
+                    {% else %}
+                    <li><a href="{% url 'login' %}">Login</a></li>
+                    <li><a href="{% url 'signup_view' %}">SignUp</a></li>
+                    {% endif %}
+                        
+                    
+
+                </ul>
+            </nav>
+
+        </header>
+    
+        {% block content %}
+        
+        {% endblock content %}
+        
+        {% block script %}
+            
+        {% endblock script %}
+        <script>
+
+            $('header .user_name .down').click(function(){
+                $('header .user_name .dropdown').toggle()
+            })
+  
+        </script>
+    </body>
+</html>

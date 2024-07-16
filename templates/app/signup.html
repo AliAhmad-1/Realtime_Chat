@@ -1,0 +1,120 @@
+{% extends 'app/base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}
+{{ block.super }}-Sign Up
+    
+{% endblock title %}
+
+    
+{% block content %}
+
+
+    <div class="alert-success hide">
+        <p>Your account was created successfully</p>
+        <img src="{% static 'images/icons8-check-mark.svg' %}" alt="">
+    </div>
+
+ 
+<section class="login-container">
+    <div class="base-container">
+        <h2>Sign Up</h2>
+        <p>Create new account and if you have an account already <a href="{% url 'login' %}">login</a> from here .</p>
+        <form action="{% url 'signup' %}" id="id_form" method="post" novalidate >
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div class="alert_danger">
+                    
+                    {% for error in form.non_field_errors %}
+                        <span>{{error}}</span>
+                    {% endfor %}
+                        
+                </div>
+            {% endif %}
+
+            {% for field in form %}
+            <div class="form-control">
+                <label for="{{field.id_for_label}}">{{field.label_tag}}</label>
+                
+                {% if form.is_bound %}
+                    
+                    {% if field.errors %}
+                        {% render_field field class="in-valid" %}
+                        
+                        {% for error in field.errors %}
+                            <span class="error">{{error}}</span>
+                        {% endfor %}
+                    {% else %}
+                        {% render_field field class="valid" %}
+                    {% endif %}
+                        
+                {% else %}
+                    {% render_field field %}
+
+                        
+                        
+                {% endif %}
+                
+                    
+                
+            </div>
+            {% endfor %}
+
+            <a href="">Forgot your password?</a>
+            <button type="button" id="submit_button">sign up</button>
+        </form>
+    </div>
+</section>
+
+
+<script>
+    $('#submit_button').click(function(){
+        //var username=$('input[name=username]').val()
+        //var password1=$('input[name=password1]').val()
+        //var password2=$('input[name=password2]').val()
+        //var csrftoken=$('input[name=csrfmiddlewaretoken]').val()
+        //data={'username':username,'password1':password1,'password2':password2,'csrfmiddlewaretoken':csrftoken}
+        
+ 
+        $.ajax({
+        url:"{% url 'signup' %}",
+        method:'post',
+        data:$('#id_form').serialize(),
+        dataType:'json',
+
+        success:function(data){
+        
+        if(data.status == 'Error'){
+            errors=data.errors
+            $('input').removeClass('in-valid');
+            $('input').addClass('valid');
+            
+            $('.form-control span.error').remove()
+            $.each(errors,function(field,error_list){
+                $('#id_'+field).removeClass('valid');
+                $('#id_'+field).addClass('in-valid');
+                $('#id_'+field).after('<span class="error">'+error_list.join('<br/>')+'</span>')
+
+
+               
+            })}
+            else{
+            $('form')[0].reset();
+            $('.alert-success').removeClass('hide');
+            
+            }
+
+
+
+        
+        }
+
+        });
+    })
+
+
+</script>
+{% endblock content %}
+        

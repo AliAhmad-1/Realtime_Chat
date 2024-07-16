@@ -1,0 +1,95 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}
+    User Profile
+{% endblock title %}
+
+
+
+{% block content %}
+<section class="login-container">
+    <div class="base-container ">
+        <h4>Profile Update</h4>
+        <form action="{% url 'profile' %}" method="post" id="profile-form" enctype="multipart/form-data" novalidate autocomplete="off">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div class="alert_danger">
+                    {% for error in form.non_field_errors %}
+                        {{error}}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            
+            {% for field in form %}
+                <div class="form-control">
+                    
+                    {% if field.name != 'photo'  %}
+                    <label for="{{field.id_for_label}}">{{field.label_tag}}</label>
+                    {% else %}
+                    
+                    {% if request.user.photo %}
+                    <img src="{{request.user.photo.url}}" alt="user-photo" class="user-photo">
+
+                    {% else %}
+                    <img src="{% static 'images/dp.png' %}" alt="user-photo" class="user-photo">
+
+                    {% endif %}
+                        
+
+                    <label for="{{field.id_for_label}}">
+    
+                        <img src="{% static 'images/icons8-registration-50 (1).png' %}" alt="plus-image" class="plus-image">
+                    </label>
+                    {% endif %}
+                        
+                    
+                    {% if form.is_bound %}
+                        
+                        {% if field.errors %}
+                            {% render_field field class="in-valid"  %}
+                            
+                            {% for error in field.errors %}
+                                <span class="error">{{error}}</span>
+                            {% endfor %}
+                        {% else %}
+                        {% render_field field class="valid" %}
+                            
+                        {% endif %}
+                            
+                    {% else %} 
+                        
+                        
+                        {% if field.name != 'photo' %}
+                            {% render_field field %}
+                        {% else %}
+                        <div class="field-hide">
+                            {% render_field field %}
+                        </div>
+                        {% endif %}
+                            
+
+                        
+
+                    {% endif %}
+                </div>
+
+                    
+                
+            {% endfor %}
+                
+            
+            <button type="submit"> Update</button>
+        </form>
+    </div>
+</section>
+<script>
+    document.querySelector('.form-control #id_photo').addEventListener('change',()=>{
+        document.querySelector('.user-photo').src = URL.createObjectURL(document.querySelector('.form-control #id_photo').files[0])
+    })
+
+</script>
+{% endblock content %}

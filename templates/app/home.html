@@ -1,0 +1,90 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}
+    {{ block.super }} - Home
+{% endblock title %}
+
+
+
+{% block content %}
+
+<div class="container_persons">
+    <div class="container">
+
+        <div class="persons">
+            <div class="head">
+                <h3>All People</h3>
+                <p>
+                    <img src="{% static 'images/icons8-notification.svg' %}" alt="">
+                    <span class="notifi_count hide"></span>
+                </p>
+                
+            </div>
+
+            <ul>
+                
+                {% for user in users %}
+                <li>
+                    
+                    
+                    {% if user.photo %}
+                    <img src="{{user.photo.url}}" alt="person-photo">
+                    {% else %}
+                    <img src="{% static 'images/dp.png' %}" alt="person-photo">
+                    {% endif %}
+                        
+                    <div>
+                        <p class="person-name">
+                            <a href="{% url 'person_chat' user.username %}">{{user.username}}</a>
+                        </p>
+
+                            
+                    </div>
+                </li>
+                {% endfor %}
+                    
+
+
+            </ul>
+        </div>
+        <div class="group-join">
+
+            <p>In order to join an existing group , you can enter its name here :</p>
+            <form action="" method="post" novalidate>
+    
+                {% csrf_token %}
+                
+                <input type="text" name="group_name" placeholder="Enter group name">
+                <button type="submit">Join</button>
+            </form>
+        </div>
+    </div>
+
+
+</div>
+
+
+{% endblock content %}
+
+{% block script %}
+    <script>
+        const ws=new WebSocket('ws://127.0.0.1:8000/ws/awc/send_notification/');
+        ws.addEventListener("open",()=>{
+            console.log('WebSocket Notifi connected..!')
+        }) 
+        ws.addEventListener("message",(event)=>{
+    
+            data=JSON.parse(event.data)
+            $('div.head span.notifi_count ').removeClass('hide')
+            $('div.head span.notifi_count ').text(data.count)
+
+        })
+        ws.addEventListener("close",()=>{
+        
+            console.log('WebSocket disconnected ..!')
+        })
+    </script>
+{% endblock script %}
+    
+    

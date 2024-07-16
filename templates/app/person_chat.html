@@ -1,0 +1,257 @@
+{% extends 'app/base.html' %}
+
+{% load static %}
+
+{% block title %}
+    {{ block.super }}_home
+{% endblock title %}
+
+
+
+{% block content %}
+
+<div class="all_message_content">
+    <div class="header-personchat">
+        
+        {% if other_user.photo %}
+            <img src="{{other_user.photo.url}}" alt="">
+        {% else %}
+            <img src="{% static 'images/dp.png' %}" alt="">
+        {% endif %}
+            
+        
+        <span class="user-name">{{other_user.username}}</span>
+    </div>
+   
+    {% if other_user.status_online %}
+    <p class="status status_online">Online &#9679;</p>
+    {% else %}
+    <p class="status status_offline">Offline</p>
+    {% endif %}
+        
+    <ul>
+        
+        {% for chat in chats %}
+           
+        {% if chat.owner == request.user %}
+        
+        <li>
+
+            <div class="send ">
+                <p>{{chat.message}}<span>{{chat.message_date|date:"TIME_FORMAT"}}</span></p>
+                {% if request.user.photo %}
+                <img src="{{request.user.photo.url}}" alt="user_photo">
+
+                {% else %}
+                <img src="{% static 'images/dp.png' %}" alt="user_photo">
+
+                {% endif %}
+            </div>
+
+        </li>
+
+        {% else %}
+        <li>
+            <div class="receive">
+                {% if chat.owner.photo %}
+                <img src="{{chat.owner.photo.url}}" alt="user_photo">
+
+                {% else %}
+                <img src="{% static 'images/dp.png' %}" alt="user_photo">
+
+                {% endif %}
+                <p>{{chat.message}}<span>{{chat.message_date|date:"TIME_FORMAT"}}</span></p>
+            </div>
+        </li>
+
+        {% endif %}
+        {% endfor %}
+
+
+    </ul>
+    <form method="" action="#" autocomplete="off" id="form_chat_person">
+        <div>
+            <input type="text" name="input_data" id="input_data" placeholder="type your message ..">
+            <button type="button">Send</button>
+        </div>
+    </form>
+</div>
+{% if request.user.photo %}
+    {{request.user.photo.url|json_script:"user_photo"}}
+{% else %}
+{{"/static/images/dp.png"|json_script:"user_photo"}}
+{% endif %}
+{{other_user.id|json_script:"other_user_id"}}
+{{request.user.username|json_script:"user_name"}}
+<script>
+    const user_photo=JSON.parse(document.getElementById("user_photo").textContent)
+    const other_user_id=JSON.parse(document.getElementById('other_user_id').textContent)
+    const user_name=JSON.parse(document.getElementById("user_name").textContent)
+    var message=document.querySelector('.all_message_content ul')
+
+
+    const ws=new WebSocket('ws://127.0.0.1:8000/ws/awc/person_chat/'+other_user_id+'/');
+    ws.addEventListener('open',()=>{
+    console.log('WebSocket connected ..!')
+    
+    })
+    ws.addEventListener("message",(event)=>{
+        
+        var msg=JSON.parse(event['data'])
+        var new_msg=msg['message']
+        var message_date=msg['message_date']
+        var user_photo_url=msg['user_photo']
+        
+        console.log('message received from server:',new_msg)
+        user=msg['user']
+        if(user == user_name){
+            $('.receive').removeClass('animi-receive')
+            $('.send').removeClass('animi-send')
+            message.innerHTML+=`
+            <li>
+            <div class="send animi-send">
+
+                <p>${new_msg}<span>${message_date}</span></p>
+                <img src="${user_photo_url}" alt="user_photo">                
+            </div>
+    
+            </li>
+            `
+        }
+        else{
+            $('.send').removeClass('animi-send')
+            $('.receive').removeClass('animi-receive')
+            message.innerHTML+=`
+            <li>
+            <div class="receive animi-receive">
+                 <img src="${user_photo_url}" alt="user_photo">
+                <p>${new_msg}<span>${message_date}</span></p>
+                
+            </div>
+    
+            </li>
+            `
+        }
+
+        scroll_To_Bottom()
+    })
+
+    ws.addEventListener('close',()=>{
+        console.log('WebSocket disconnected ..!')
+    })
+
+    function send_message(){
+        var message_input=document.getElementById('input_data')
+        var current_time=new Date()
+        date_options={hour:"numeric",minute:'numeric',hour12:true}
+        var time=current_time.toLocaleTimeString('en',date_options)
+
+        time = time.replace("AM", "a.m.").replace("PM", "p.m.");
+
+        if (message_input.value != ''){
+            
+            ws.send(JSON.stringify({
+                'msg':message_input.value,
+                'user':"{{request.user.username}}",
+                'message_date':time,
+                'user_photo':user_photo
+            
+            }))
+            message_input.value=''
+        
+        }
+    }
+
+    document.querySelector('#form_chat_person button').addEventListener('click',(event)=>{
+        event.preventDefault()
+        send_message()
+        
+        
+    })
+
+    document.getElementById('input_data').addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            document.querySelector('form button').click();
+            }
+    });
+    document.getElementById('input_data').focus();
+
+    function scroll_To_Bottom(){
+        const container=document.querySelector('div.all_message_content ul');
+        container.scrollTop=container.scrollHeight;
+    }
+    scroll_To_Bottom()
+</script>
+
+
+{% endblock content %}
+
+
+{% block script %}
+
+    <script>
+        const ws_online=new WebSocket('ws://127.0.0.1:8000/ws/awc/online/');
+
+        ws_online.addEventListener("open",()=>{
+            console.log('WebSocket connected .. !')
+            ws_online.send(JSON.stringify({
+            'status':'open',
+            'user':"{{request.user.username}}"
+            }))
+        })
+
+        window.addEventListener("beforeunload",()=>{
+            ws_online.send(JSON.stringify({
+                'status':'offline',
+                'user':"{{request.user.username}}"
+                }))
+        
+        })
+
+        ws_online.addEventListener("message",(event)=>{
+            var data=JSON.parse(event['data'])
+            if(data.user != "{{request.user.username}}"){
+                
+                if(data.status == 'open'){
+                
+                    document.querySelector('.all_message_content p.status').innerHTML=`Online &#9679;`
+                    document.querySelector('.all_message_content p.status').style.color='#02d782'
+                }
+                else{
+                    
+                    document.querySelector('.all_message_content p.status').innerHTML=`Offline`
+                    document.querySelector('.all_message_content p.status').style.color='gray'
+                }
+            }
+        })
+        
+        ws_online.addEventListener("close",()=>{
+        
+            console.log('WebSocket disconnected')
+        })
+
+    </script>
+{% endblock script %}
+    
+
+    
+
+
+  
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
