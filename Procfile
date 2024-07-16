@@ -1,2 +1,2 @@
-web: gunicorn blog.wsgi --log-file - 
-web: python manage.py migrate && gunicorn blog.wsgi
+web: daphne chat_app.asgi:application -b 0.0.0.0 -p $PORT
+web: python manage.py migrate && daphne chat_app.asgi
