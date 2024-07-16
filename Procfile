@@ -1,2 +1,2 @@
-web: daphne chat_app.asgi:application --port $PORT --bind 0.0.0.0
+web: daphne chat_app.asgi:application -b 0.0.0.0 -p $PORT
 web: python manage.py migrate
