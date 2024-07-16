@@ -21,12 +21,9 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['realtimechat-production-5704.up.railway.app']
 
-CSRF_TRUSTED_ORIGINS = [ 'https://realtimechat-production-5704.up.railway.app' ]
+CSRF_TRUSTED_ORIGINS = ['https://realtimechat-production-5704.up.railway.app']
 
-# INTERNAL_IPS = (
-#     '127.0.0.1',
-#     'localhost:8000'
-# )
+
 
 
 # Application definition
