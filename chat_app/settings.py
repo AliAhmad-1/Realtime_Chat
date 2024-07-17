@@ -163,5 +163,3 @@ LOGIN_URL="login"
 LOGIN_REDIRECT_URL='auth/profile/'
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-SECURE_PROXY_SSL_HEADER=("HTTP_X_FORWARDED_PROTO","https")
-SECURE_SSL_REDIRECT=True
