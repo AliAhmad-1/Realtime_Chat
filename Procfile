@@ -1,2 +1,2 @@
-web: gunicorn chat_app.asgi:application --host 0.0.0.0 --port $PORT
-web: python manage.py migrate && gunicorn chat_app.asgi
+web: daphne -p 8000 chat_app.asgi:application
+web: python manage.py migrate && daphne chat_app.asgi
