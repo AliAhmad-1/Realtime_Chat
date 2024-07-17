@@ -76,8 +76,13 @@
     const user_name=JSON.parse(document.getElementById("user_name").textContent)
     var message=document.querySelector('.all_message_content ul')
 
-    
-    const ws=new WebSocket('ws://127.0.0.1:8000/ws/awc/group_chat/'+group_name+'/')
+    //('ws://127.0.0.1:8000/ws/awc/group_chat/'+group_name+'/')
+    const ws=new WebSocket('wss://'+
+        window.location.host+
+        '/ws/awc/group_chat/'+
+        group_name+
+        '/'
+    )
 
 
     ws.addEventListener("open",(event)=>{
