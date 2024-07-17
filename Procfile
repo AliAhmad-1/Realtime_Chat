@@ -1,2 +1,2 @@
-web: daphne chat_app.asgi:application --bind 127.0.0.1:8000 -p $PORT 
+web: daphne chat_app.asgi:application --port $PORT --bind 0.0.0.0
 web: python manage.py migrate 
