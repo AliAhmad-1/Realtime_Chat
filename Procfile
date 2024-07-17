@@ -1,2 +1,1 @@
-web: daphne chat_app.asgi:application -b 0.0.0.0 -p $PORT --verbosity 1
-web: python manage.py migrate
+web: python manage.py migrate && python -m gunicorn chat_app.asgi:application -k uvicorn.workers.UvicornWorker
