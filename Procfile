@@ -1,2 +1,2 @@
-web: daphne chat_app.asgi:application -b 0.0.0.0 -p $PORT --verbosity 1
+web: daphne chat_app.asgi:application --bind 0.0.0.0:8000 -p $PORT 
 web: python manage.py migrate 
