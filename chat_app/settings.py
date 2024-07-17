@@ -23,7 +23,10 @@ ALLOWED_HOSTS = ['realtime-chat-xby1.onrender.com','127.0.0.1']
 
 CSRF_TRUSTED_ORIGINS = ['https://realtime-chat-xby1.onrender.com']
 
-
+INTERNAL_IPS = (
+    '127.0.0.1',
+    'localhost:8000'
+)
 
 
 # Application definition
