@@ -190,7 +190,9 @@
 {% block script %}
 
     <script>
-        const ws_online=new WebSocket('ws://127.0.0.1:8000/ws/awc/online/');
+        const ws_online=new WebSocket('wss://'+
+        window.location.host+'/ws/awc/online/'
+        );
 
         ws_online.addEventListener("open",()=>{
             console.log('WebSocket connected .. !')
