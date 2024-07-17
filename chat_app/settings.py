@@ -19,9 +19,9 @@ SECRET_KEY = str(os.getenv('SECRET_KEY'))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['realtimechat-production-5704.up.railway.app']
+ALLOWED_HOSTS = ['realtimecha.up.railway.app']
 
-CSRF_TRUSTED_ORIGINS = ['https://realtimechat-production-5704.up.railway.app']
+CSRF_TRUSTED_ORIGINS = ['https://realtimecha.up.railway.app']
 
 
 
