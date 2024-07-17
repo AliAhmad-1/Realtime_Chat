@@ -90,7 +90,9 @@
     var message=document.querySelector('.all_message_content ul')
 
 
-    const ws=new WebSocket('ws://127.0.0.1:8000/ws/awc/person_chat/'+other_user_id+'/');
+    const ws=new WebSocket('wss://'+
+    window.location.host+'/ws/awc/person_chat/'+other_user_id+'/'
+    );
     ws.addEventListener('open',()=>{
     console.log('WebSocket connected ..!')
     
