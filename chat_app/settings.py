@@ -1,5 +1,7 @@
 
-
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 from pathlib import Path
 import os
 import dj_database_url
@@ -43,6 +45,8 @@ INSTALLED_APPS = [
     'app',
     'accounts',
     'widget_tweaks',
+    'cloudinary_storage',
+    'cloudinary',
 
 ]
 
@@ -140,8 +144,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-MEDIA_URL='/media/'
-MEDIA_ROOT=os.path.join(BASE_DIR,'media')
+# MEDIA_URL='/media/'
+# MEDIA_ROOT=os.path.join(BASE_DIR,'media')
 # STATICFILES_DIRS=[
 # os.path.join(BASE_DIR,'static')
 # ]
@@ -161,6 +165,18 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+CLOUDINARY_STORAGE = {
+        'CLOUDINARY_URL': str(os.getenv('CLOUDINARY_URL'))
+}
+cloudinary.config( 
+    cloud_name = "dfjioen9q", 
+    api_key = "675943688331831", 
+    api_secret = "lTlUfVYih6OgbE1vEt0LYnmU9gc",
+    secure=True
+)
+
 
 LOGIN_URL="login"
 LOGIN_REDIRECT_URL='auth/profile/'
