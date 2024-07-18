@@ -71,8 +71,8 @@
     <script>
         const ws=new WebSocket(
         'wss://'+
-        window.location.host+
-        'ws/awc/send_notification/'
+        window.location.host +
+        '/ws/awc/send_notification/'
         );
         ws.addEventListener("open",()=>{
             console.log('WebSocket Notifi connected..!')
